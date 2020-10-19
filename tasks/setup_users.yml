@@ -1,0 +1,57 @@
+---
+- name: Add devsecops group
+  group:
+    name: devsecops
+    gid: 101
+    system: yes
+    state: present
+
+- name: Add oncall group
+  group:
+    name: oncall
+    gid: 102
+    system: yes
+    state: present
+
+- name: Add developers group
+  group:
+    name: developers
+    gid: 103
+    system: yes
+    state: present
+
+- name: Create user accounts
+  user:
+    append: yes
+    name: "{{ item.value.username }}"
+    groups:
+      - "{{ item.value.groups }}"
+    shell: /bin/bash
+    home: /home/{{ item.value.username }}
+    comment: "{{ item.value.name }}"
+    createhome: yes
+    state: present
+  with_dict: "{{ present_users }}"
+
+- name: Setup | authorized key upload
+  authorized_key: user={{ item.value.username }}
+    key={{ lookup('file', '../files/public_ssh_keys/{{ item.value.username }}.pub') }}
+  with_dict: "{{ present_users }}"
+
+- name: Create sudoers group
+  template:  
+    src: "../templates/sudoers.j2"
+    dest: "/etc/sudoers.d/100-group-sudoers"
+    mode: 0440
+    owner: root
+    group: root
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Remove user accounts
+  user:
+    name: "{{ item.key }}"
+    remove: yes
+    force: yes
+    state: absent
+  with_dict: "{{ absent_users | default({}) }}"
+  when: absent_users is defined

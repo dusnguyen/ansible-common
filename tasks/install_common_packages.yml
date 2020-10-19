@@ -1,0 +1,28 @@
+---
+- name: Enable EPEL Repository
+  yum:
+    name: epel-release
+    state: present
+  register: result
+  until: result is success
+  retries: "{{ package_repository_retry_count }}"
+  delay: "{{ package_repository_retry_delay }}"
+
+- name: Install common packages
+  yum:
+    name: "{{ package_common_list }}"
+    update_cache: yes
+    state: present
+  register: result
+  until: result is success
+  retries: "{{ package_repository_retry_count }}"
+  delay: "{{ package_repository_retry_delay }}"
+
+- name: Remove unrequired packages
+  yum:
+    name: "{{ (package_absent_list | difference(package_absent_exclusion_list)) }}"
+    state: absent
+  register: result
+  until: result is success
+  retries: "{{ package_repository_retry_count }}"
+  delay: "{{ package_repository_retry_delay }}"

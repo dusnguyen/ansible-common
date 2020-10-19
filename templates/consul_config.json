@@ -1,0 +1,21 @@
+{
+  "primary_datacenter": "{{ consul_datacenter }}",
+  "bootstrap": false,
+  "server": false,
+  "datacenter": "{{ consul_datacenter }}",
+  "data_dir": "{{ consul_data_dir }}",
+  "log_level": "{{ consul_default_log_level }}",
+  "bind_addr": "{{ ansible_eth0.ipv4.address }}",
+  "client_addr": "0.0.0.0",
+  "enable_syslog": {{ consul_use_syslog }},
+  "leave_on_terminate": true,
+  "encrypt": "{{ consul_gossip_encrypt_key }}",
+  "enable_script_checks": {{ consul_enable_script_checks }},
+  "acl": {
+    "enabled": {{ consul_enable_acl }},
+    "tokens": {
+      "agent": "{{ consul_agent_token }}",
+      "agent_master": "{{ consul_agent_master_token }}"
+    }
+  }
+}

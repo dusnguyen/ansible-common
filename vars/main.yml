@@ -1,0 +1,14 @@
+---
+present_users:
+  dustin:
+    name: Dustin Nguyen
+    username: dustin.nguyen
+    groups: "devsecops"
+    custom_profile: False
+
+sudoers_groups:
+  - devsecops
+
+# absent_users: {}
+absent_users: 
+    centos:

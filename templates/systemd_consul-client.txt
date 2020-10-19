@@ -1,0 +1,17 @@
+[Unit]
+Description=Consul Client
+Documentation=https://www.consul.io/docs/index.html
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ consul_user_name }}
+ExecStart={{ consul_install_dir }}/consul agent \
+          -config-file {{ consul_config_dir }}/config.json \
+          -rejoin -node {{ consul_node_name }}-{{ ansible_stage }}
+ExecStop=/bin/kill -9 $MAINPID
+ExecReload=/bin/kill -SIGHUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

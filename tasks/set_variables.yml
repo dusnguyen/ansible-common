@@ -1,0 +1,21 @@
+---
+- name: Checking that inventory is valid
+  fail:
+    msg: "ERROR: Invalid inventory"
+  when: not inventory_dir
+  tags: always
+
+- name: Include global variables
+  include_vars: ./inventories/all/main.yml
+  ignore_errors: yes
+  tags: always
+
+- name: Include aws environment group variables
+  include_vars: ./inventories/{{ aws_inventory }}/group_vars/main.yml
+  ignore_errors: yes
+  tags: always
+
+- name: Include aws environment host variables
+  include_vars: ./inventories/{{ aws_inventory }}/host_vars/{{ ansible_hostname }}.yml
+  ignore_errors: yes
+  tags: always

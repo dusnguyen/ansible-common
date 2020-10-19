@@ -1,0 +1,43 @@
+---
+- name: Copy the Node Exporter systemd service file
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart node_exporter
+
+- name: Create texfile collector dir
+  file:
+    path: "{{ prometheus_node_exporter_textfile_dir }}"
+    state: directory
+    owner: "{{ prometheus_node_exporter_system_user }}"
+    group: "{{ prometheus_node_exporter_system_group }}"
+    recurse: true
+    mode: 0775
+  when: prometheus_node_exporter_textfile_dir | length > 0
+
+- name: Allow Node Exporter port in SELinux on RedHat OS family
+  seport:
+    ports: "{{ prometheus_node_exporter_web_listen_address.split(':')[1] }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when:
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+
+- name: Ensure Node Exporter is enabled on boot
+  become: true
+  systemd:
+    daemon_reload: true
+    name: node_exporter
+    enabled: true
+  tags:
+    - node_exporter_run
+
+- name: start node_exporter
+  systemd:
+    name: node_exporter
+    state: started

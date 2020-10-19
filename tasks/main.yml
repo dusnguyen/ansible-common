@@ -1,0 +1,42 @@
+---
+- name: Set variables
+  include_tasks: set_variables.yml
+  tags:
+    - set_variables
+  when: set_variables
+
+- name: Install common package
+  include_tasks: install_common_packages.yml
+  tags:
+    - install_common_packages
+  when: install_common_packages
+
+- name: Setup users
+  include_tasks: setup_users.yml
+  tags:
+    - setup_users
+  when: setup_users
+
+- name: Set timezone
+  include_tasks: set_timezone.yml
+  tags:
+    - set_timezone
+  when: set_timezone
+
+- name: Preflight Prometheus Node Exporter
+  include_tasks: preflight_prometheus_node_exporter.yml
+  tags:
+    - preflight_prometheus_node_exporter
+  when: preflight_prometheus_node_exporter
+
+- name: Install Prometheus Node Exporter
+  include_tasks: install_prometheus_node_exporter.yml
+  tags:
+    - install_prometheus_node_exporter
+  when: install_prometheus_node_exporter
+
+- name: Configure Prometheus Node Exporter
+  include_tasks: configure_prometheus_node_exporter.yml
+  tags:
+    - configure_prometheus_node_exporter
+  when: configure_prometheus_node_exporter
