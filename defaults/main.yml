@@ -22,7 +22,7 @@ package_common_list: [
 ]
 package_repository_retry_count: 10
 package_repository_retry_delay: 5
-timezone: "Europe/London"
+timezone: "Asia/Ho_Chi_Minh"
 
 # Main setup switches
 set_variables: true
