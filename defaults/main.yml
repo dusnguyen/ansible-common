@@ -43,9 +43,7 @@ go_arch_map:
   armv7l: 'armv7'
   armv6l: 'armv6'
 go_arch: "{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}"
-prometheus_node_exporter_dependencies:
-  - libselinux-python
-  - policycoreutils-python
+prometheus_node_exporter_dependencies: []
 prometheus_node_exporter_disabled_collectors: []
 prometheus_node_exporter_enabled_collectors:
   - systemd
@@ -54,87 +52,6 @@ prometheus_node_exporter_enabled_collectors:
 prometheus_node_exporter_system_group: "node_exporter"
 prometheus_node_exporter_system_user: "{{ prometheus_node_exporter_system_group }}"
 prometheus_node_exporter_textfile_dir: "/var/lib/node_exporter"
-prometheus_node_exporter_version: 0.17.0
+prometheus_node_exporter_version: 1.0.1
 prometheus_node_exporter_web_listen_address: "0.0.0.0:9100"
 prometheus_node_exporter_port: 9100
-
-#Fluentd configuration
-install_fluentd: false
-configure_fluentd: false
-fluentd_destination: ""
-fluentd_td_agent_version: 3.3.0
-fluentd_config_dir: /etc/td-agent
-fluentd_client_type: systemd # or native
-td_agent_user:  td-agent
-firehose_es_stream: ""
-fluentd_es_index_name: ""
-es_endpoint: ""
-
-#Consul configuration
-install_consul: false
-configure_consul_client: false
-configure_consul_health: false
-consul_cluster: false
-consul_user_name: consul
-consul_user_uid: 8500
-consul_user_group: consul
-consul_user_gid: 8500
-consul_user_home_dir: /home/consul
-consul_config_dir: /etc/consul.d
-consul_data_dir: /var/consul
-consul_logs_dir: "{{ consul_user_home_dir }}/logs"
-aws_block_device_name: xvdh
-consul_create_fs: False
-consul_fs_type: ext4
-consul_install_dir: /usr/local/bin
-consul_version: 1.4.2
-consul_release_artifact: consul_{{ consul_version }}_linux_amd64.zip
-consul_release_source: https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_release_artifact }}
-consul_version_changed: False
-consul_service_name: consul-client
-consul_cluster_join_address: services.{{ domain }}
-consul_datacenter: "euc1"
-consul_default_log_level: warn
-consul_enable_acl: "true"
-consul_enable_script_checks: "true"
-consul_use_syslog: "true"
-consul_agent_token: "{{ consul_agent_token }}"
-consul_agent_master_token: "{{ consul_agent_master_token }}"
-consul_gossip_encrypt_key: "{{ consul_gossip_encrypt_key }}"
-consul_port_serf_lan: 8301
-consul_port_api: 8500
-consul_health_validate_certs: False
-consul_health_services_present_list: []
-consul_health_services_absent_list: []
-consul_health_services_local: {}
-consul_health_checks_present_list: []
-consul_health_checks_absent_list: []
-consul_health_scheme: http
-consul_health_host: localhost
-consul_health_port: "{{ consul_port_api }}"
-consul_health_ttl: ""
-
-consul_health_services_common:
-  prometheus_node_exporter_http:
-    service_name: prometheus-node-exporter
-    service_id: _prometheus-node-exporter-http
-    service_address: "{{ ansible_eth0.ipv4.address }}"
-    service_port: "{{ prometheus_node_exporter_port }}"
-    script: ""
-    http: "http://localhost:{{ prometheus_node_exporter_port }}/metrics"
-    interval: 10s
-    timeout: 10s
-    tags: "{{ ['metrics'] }}"
-    notes: OS http metrics for Prometheus
-
-  prometheus_node_exporter_process:
-    service_name: prometheus-node-exporter
-    service_id: _prometheus-node-exporter-process
-    service_address: "{{ ansible_eth0.ipv4.address }}"
-    service_port: "{{ prometheus_node_exporter_port }}"
-    script: "/bin/ps -ef | grep -v grep | grep node_exporter"
-    http: ""
-    interval: 10s
-    timeout: ""
-    tags: "{{ ['process'] }}"
-    notes: Prometheus Node Exporter process
