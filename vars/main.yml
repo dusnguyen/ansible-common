@@ -2,7 +2,7 @@
 present_users:
   dustin:
     name: Dustin Nguyen
-    username: dustin.nguyen
+    username: dustin
     groups: "devsecops"
     custom_profile: False
 
